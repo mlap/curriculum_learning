@@ -1,6 +1,15 @@
 import gym
-import stable_baselines2
+import envs
+import stable_baselines
 from stable_baselines import PPO2
+from stable_baselines.common.policies import LstmPolicy
+from stable_baselines.common import make_vec_env
+import tensorflow as tf
+
+# To avoid GPU memory hogging by TF
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+sess = tf.Session(config=config)
 
 net_arch = {
     "small": dict(pi=[64, 64], vf=[64, 64]),
@@ -31,7 +40,7 @@ class CustomLSTMPolicy(LstmPolicy):
             n_batch,
             n_lstm,
             reuse,
-            net_arch=[100, "lstm", net_arch["medium"]],
+            net_arch=[100, "lstm", net_arch["med"]],
             layer_norm=True,
             feature_extraction="mlp",
             **_kwargs,
@@ -41,9 +50,9 @@ class CustomLSTMPolicy(LstmPolicy):
 if __name__ == "__main__":
     # Instantiating the first agent
     env = make_vec_env(
-        lambda: gym.make("curriculum_fishing-v0", Tmax=self.Tmax),
-        n_envs=params["n_envs"],
+        lambda: gym.make("curriculum_fishing-v0", Tmax=100),
+        n_envs=8,
     )
     model = PPO2(CustomLSTMPolicy, env, verbose=0)
-    model.learn(total_timesteps=self.inter_tsteps, env=env)
-    model.save(f"agents/{self.fishing_agent_name}")
+    model.learn(total_timesteps=100)
+    model.save(f"agents/parameter_agent")
