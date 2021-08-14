@@ -88,7 +88,8 @@ class CurriculumFishingEnv(gym.Env):
             lambda: gym.make(
                 self.env_name,
                 Tmax=self.Tmax,
-                params={"r": env_kwargs[0], "K": env_kwargs[1]},
+                r=env_kwargs[0], 
+                K=env_kwargs[1],
             ),
             n_envs=8,
         )
@@ -102,7 +103,8 @@ class CurriculumFishingEnv(gym.Env):
         eval_env = gym.make(
             self.env_name,
             Tmax=self.Tmax,
-            params={"r": env_kwargs[0], "K": env_kwargs[1]},
+            r=env_kwargs[0], 
+            K=env_kwargs[1],
         )
         eval_df = simulate_mdp_vec(env, eval_env, model, 10)
         mean_rew = eval_df.groupby(["rep"]).sum().mean(axis=0)["reward"]

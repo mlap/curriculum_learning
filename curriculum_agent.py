@@ -54,5 +54,5 @@ if __name__ == "__main__":
         n_envs=8,
     )
     model = PPO2(CustomLSTMPolicy, env, verbose=0)
-    model.learn(total_timesteps=100)
+    model.learn(total_timesteps=10000)
     model.save(f"agents/parameter_agent")
