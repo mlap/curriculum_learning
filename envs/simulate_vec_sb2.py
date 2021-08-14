@@ -6,8 +6,8 @@ def df_entry_vec(df, env, rep, obs, action, reward, t):
     series = pd.Series(
         [
             t,
-            env.get_unscaled_state(obs[0]),
-            env.get_unscaled_action(action[0]),
+            env.get_fish_population(obs[0]),
+            env.get_action(action[0]),
             reward[0],
             rep,
         ],

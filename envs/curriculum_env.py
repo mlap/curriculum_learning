@@ -45,7 +45,7 @@ class CustomLSTMPolicy(LstmPolicy):
 class CurriculumFishingEnv(gym.Env):
     def __init__(
         self,
-        env_name="fishing-v0",
+        env_name="fishing-v1",
         fishing_agent_name="fishing_agent",
         fishing_agent_hypers={
             "batch_size": 128,
@@ -73,7 +73,7 @@ class CurriculumFishingEnv(gym.Env):
             lambda: gym.make(self.env_name, Tmax=self.Tmax),
             n_envs=8,
         )
-        model = PPO2(CustomLSTMPolicy, env, verbose=0)
+        model = PPO2(CustomLSTMPolicy, env, verbose=1)
         model.learn(total_timesteps=self.inter_tsteps)
         model.save(f"agents/{self.fishing_agent_name}")
         del model
@@ -81,9 +81,7 @@ class CurriculumFishingEnv(gym.Env):
     def step(self, action):
         # Mapping action to env kwargs and creating environment
         env_kwargs = self.rescale_params(action)
-        import pdb
-
-        pdb.set_trace()
+    
         env = make_vec_env(
             lambda: gym.make(
                 self.env_name,
@@ -97,7 +95,7 @@ class CurriculumFishingEnv(gym.Env):
         # load agent and train on new set of env kwargs
         model = PPO2.load(f"agents/{self.fishing_agent_name}")
         model.set_env(env)
-        model.learn(total_timesteps=self.inter_tsteps, env=env)
+        model.learn(total_timesteps=self.inter_tsteps)
         model.save(f"agents/{self.fishing_agent_name}")
 
         eval_env = gym.make(
@@ -107,7 +105,7 @@ class CurriculumFishingEnv(gym.Env):
             K=env_kwargs[1],
         )
         eval_df = simulate_mdp_vec(env, eval_env, model, 10)
-        mean_rew = eval_df.groupby(["rep"]).sum().mean(axis=0)["reward"]
+        mean_reward = eval_df.groupby(["rep"]).sum().mean(axis=0)["reward"]
         del model
 
         return action, -mean_reward, self.done, {}
