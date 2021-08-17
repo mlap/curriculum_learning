@@ -1,12 +1,14 @@
 import os
 
 import gym
+import curriculum_learning
 import stable_baselines
 from stable_baselines import PPO2
 from stable_baselines.common import make_vec_env
 from stable_baselines.common.policies import LstmPolicy
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf
 
 # To avoid GPU memory hogging by TF
