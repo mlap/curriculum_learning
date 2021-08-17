@@ -5,7 +5,7 @@ from stable_baselines import PPO2
 from stable_baselines.common import make_vec_env
 from stable_baselines.common.policies import LstmPolicy
 
-from envs.simulate_vec_sb2 import simulate_mdp_vec
+from .simulate_vec_sb2 import simulate_mdp_vec
 
 net_arch = {
     "small": dict(pi=[64, 64], vf=[64, 64]),

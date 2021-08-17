@@ -1,1 +1,1 @@
-from curriculum_learning.envs import CurriculumFishingEnv
+from curriculum_learning.envs.curriculum_env import CurriculumFishingEnv
