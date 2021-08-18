@@ -1,4 +1,5 @@
 from gym.envs.registration import register
+
 __version__ = "0.0.0"
 
 entry_point = "curriculum_learning.envs:CurriculumFishingEnv"
