@@ -53,6 +53,8 @@ class CustomLSTMPolicy(LstmPolicy):
 
 
 if __name__ == "__main__":
+    if not os.path.exists("agents"):
+        os.makedirs("agents")
     # Instantiating the first agent
     env = make_vec_env(
         lambda: gym.make("curriculum_fishing-v0"),
