@@ -7,7 +7,7 @@ def df_entry_vec(df, env, rep, obs, action, reward, t):
         [
             t,
             env.get_fish_population(obs[0]),
-            env.get_action(action[0]),
+            env.get_action(action[0][0]),
             reward[0],
             rep,
         ],
