@@ -1,5 +1,6 @@
 import gym
 import gym_fishing
+import numpy as np
 from gym import spaces
 from stable_baselines import PPO2
 from stable_baselines.common import make_vec_env
@@ -61,8 +62,8 @@ class CurriculumFishingEnv(gym.Env):
         inter_tsteps=100,
         Tmax=100,
     ):
-        self.action_space = spaces.Box(low=-1, high=1, shape=(2,))
-        self.observation_space = spaces.Box(low=-1, high=1, shape=(2,))
+        self.action_space = spaces.Box(low=-0.99, high=1, shape=(2,))
+        self.observation_space = spaces.Box(low=-0.99, high=1, shape=(2,))
         self.num_episodes = 0
         self.fishing_agent_name = fishing_agent_name
         self.inter_tsteps = inter_tsteps
@@ -75,8 +76,8 @@ class CurriculumFishingEnv(gym.Env):
             lambda: gym.make(self.env_name, Tmax=self.Tmax),
             n_envs=8,
         )
-        model = PPO2(CustomLSTMPolicy, env, verbose=1)
-        model.learn(total_timesteps=self.inter_tsteps)
+        model = PPO2(CustomLSTMPolicy, env, verbose=2)
+        model.learn(total_timesteps=self.inter_tsteps, log_interval=1)
         model.save(f"agents/{self.fishing_agent_name}")
         del model
 
@@ -96,11 +97,8 @@ class CurriculumFishingEnv(gym.Env):
 
         # load agent and train on new set of env kwargs
         model = PPO2.load(f"agents/{self.fishing_agent_name}")
-        import pdb
-
-        pdb.set_trace()
         model.set_env(env)
-        model.learn(total_timesteps=self.inter_tsteps)
+        model.learn(total_timesteps=self.inter_tsteps, log_interval=1)
         model.save(f"agents/{self.fishing_agent_name}")
 
         eval_env = gym.make(
@@ -116,7 +114,7 @@ class CurriculumFishingEnv(gym.Env):
         return action, -mean_reward, self.done, {}
 
     def reset(self):
-        pass
+        return np.array([-0.99, -0.99])
 
     def rescale_params(self, action):
         # Remaps r and K to 0 to 2
