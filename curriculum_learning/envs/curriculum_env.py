@@ -51,7 +51,6 @@ class CurriculumFishingEnv(gym.Env):
         fishing_agent_name="fishing_agent",
         # Using hyperparameters from tuned LSTM agent on fishing-v1
         fishing_agent_hypers={
-            "batch_size": 128,
             "cliprange": 0.1,
             "ent_coef": 0.0008280502090570286,
             "gamma": 1,
@@ -76,7 +75,7 @@ class CurriculumFishingEnv(gym.Env):
             lambda: gym.make(self.env_name, Tmax=self.Tmax),
             n_envs=8,
         )
-        model = PPO2(CustomLSTMPolicy, env, verbose=2)
+        model = PPO2(CustomLSTMPolicy, env, verbose=2, **fishing_agent_hypers)
         model.learn(total_timesteps=self.inter_tsteps, log_interval=1)
         model.save(f"agents/{self.fishing_agent_name}")
         del model
@@ -95,7 +94,7 @@ class CurriculumFishingEnv(gym.Env):
             n_envs=8,
         )
 
-        # load agent and train on new set of env kwargs
+        # load fishing agent and train on new set of env kwargs
         model = PPO2.load(f"agents/{self.fishing_agent_name}")
         model.set_env(env)
         model.learn(total_timesteps=self.inter_tsteps, log_interval=1)
