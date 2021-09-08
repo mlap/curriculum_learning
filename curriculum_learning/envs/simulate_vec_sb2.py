@@ -1,4 +1,5 @@
 import pandas as pd
+from stable_baselines.common.policies import LstmPolicy
 
 
 def df_entry_vec(df, env, rep, obs, action, reward, t):
@@ -55,3 +56,39 @@ def simulate_mdp_vec(env, eval_env, model, n_eval_episodes):
         df = df_entry_vec(df, eval_env, rep, obs, action, reward, t)
 
     return df
+
+
+net_arch = {
+    "small": dict(pi=[64, 64], vf=[64, 64]),
+    "med": dict(pi=[256, 256], vf=[256, 256]),
+    "large": dict(pi=[400, 400], vf=[400, 400]),
+}
+
+# Creating custom LSTM policy for fishing agent
+class CustomLSTMPolicy(LstmPolicy):
+    def __init__(
+        self,
+        sess,
+        ob_space,
+        ac_space,
+        n_env,
+        n_steps,
+        n_batch,
+        n_lstm=25,
+        reuse=False,
+        **_kwargs,
+    ):
+        super().__init__(
+            sess,
+            ob_space,
+            ac_space,
+            n_env,
+            n_steps,
+            n_batch,
+            n_lstm,
+            reuse,
+            net_arch=[100, "lstm", net_arch["med"]],
+            layer_norm=True,
+            feature_extraction="mlp",
+            **_kwargs,
+        )
