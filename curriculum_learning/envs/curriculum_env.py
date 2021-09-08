@@ -80,5 +80,6 @@ class CurriculumFishingEnv(gym.Env):
 
     def rescale_params(self, action):
         # Remaps r and K from 1.9 to 2.1
-        env_kwargs = 1.9 + 0.1 * (action + 1)
-        return env_kwargs
+        r = 0.25 + 0.05 * action[0]
+        K = 0.95 + 0.05 * action[1]
+        return [r, K]
