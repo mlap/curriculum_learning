@@ -78,7 +78,7 @@ if __name__ == "__main__":
             {"r": random.uniform(0.25, 0.35), "K": random.uniform(0.95, 1.05)},
         )
         if i > 0:
-            model.load("agents/parameter_agent_random")
+            model = PPO2.load("agents/parameter_agent_random")
         else:
             model = PPO2(
                 CustomLSTMPolicy, env, verbose=2, **fishing_agent_hypers
