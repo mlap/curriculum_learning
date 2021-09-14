@@ -1,6 +1,8 @@
 import os
+import random
 
 import gym
+import gym_fishing
 import stable_baselines
 from stable_baselines import PPO2
 from stable_baselines.common import make_vec_env
@@ -16,13 +18,14 @@ config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 sess = tf.Session(config=config)
 
+# Handling network architecture options for ease of use
 net_arch = {
     "small": dict(pi=[64, 64], vf=[64, 64]),
     "med": dict(pi=[256, 256], vf=[256, 256]),
     "large": dict(pi=[400, 400], vf=[400, 400]),
 }
 
-
+# Creating custom LSTM policy to use for fishing agent
 class CustomLSTMPolicy(LstmPolicy):
     def __init__(
         self,
@@ -52,15 +55,15 @@ class CustomLSTMPolicy(LstmPolicy):
         )
 
 
-fishing_agent_hypers={
-            "cliprange": 0.1,
-            "ent_coef": 0.0008280502090570286,
-            "gamma": 1,
-            "lam": 0.8,
-            "learning_rate": 0.0002012041680316291,
-            "noptepochs": 5,
-        }
-        
+fishing_agent_hypers = {
+    "cliprange": 0.1,
+    "ent_coef": 0.0008280502090570286,
+    "gamma": 1,
+    "lam": 0.8,
+    "learning_rate": 0.0002012041680316291,
+    "noptepochs": 5,
+}
+
 if __name__ == "__main__":
     if not os.path.exists("agents"):
         os.makedirs("agents")
@@ -69,6 +72,17 @@ if __name__ == "__main__":
         lambda: gym.make("fishing-v1"),
         n_envs=8,
     )
-    model = PPO2(CustomLSTMPolicy, env, verbose=2, **fishing_agent_hypers)
-    model.learn(total_timesteps=10000, log_interval=1)
-    model.save(f"agents/parameter_agent")
+    for i in range(20):
+        env.set_attr(
+            "params",
+            {"r": random.uniform(0.25, 0.35), "K": random.uniform(0.95, 1.05)},
+        )
+        if i > 0:
+            model.load("agents/parameter_agent_random")
+        else:
+            model = PPO2(
+                CustomLSTMPolicy, env, verbose=2, **fishing_agent_hypers
+            )
+        model.learn(total_timesteps=100000, log_interval=1)
+        model.save("agents/parameter_agent_random")
+        del model
