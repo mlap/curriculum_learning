@@ -74,7 +74,6 @@ if __name__ == "__main__":
     env.set_attr("K", args.K)
     eval_env = gym.make(env_name, **env_kwargs)
     curriculum_df = simulate_mdp_vec(env, eval_env, model, 10)
-    import pdb; pdb.set_trace()
 
     ##############
     # Plotting both dfs
