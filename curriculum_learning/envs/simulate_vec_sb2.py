@@ -4,11 +4,12 @@ from stable_baselines.common.policies import LstmPolicy
 
 def df_entry_vec(df, env, rep, obs, action, reward, t):
     # Appending entry to the dataframe
+    import pdb; pdb.set_trace()
     series = pd.Series(
         [
             t,
             env.get_fish_population(obs[0]),
-            env.get_action(action[0][0]),
+            env.get_quota(action[0][0]),
             reward[0],
             rep,
         ],
