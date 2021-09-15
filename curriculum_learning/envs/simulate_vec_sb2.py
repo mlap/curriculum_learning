@@ -4,7 +4,6 @@ from stable_baselines.common.policies import LstmPolicy
 
 def df_entry_vec(df, env, rep, obs, action, reward, t):
     # Appending entry to the dataframe
-    import pdb; pdb.set_trace()
     series = pd.Series(
         [
             t,
