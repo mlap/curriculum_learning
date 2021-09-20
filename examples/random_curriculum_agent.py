@@ -1,17 +1,31 @@
 import os
 import random
-
 import gym
 import gym_fishing
 import stable_baselines
 from stable_baselines import PPO2
 from stable_baselines.common import make_vec_env
 from stable_baselines.common.policies import LstmPolicy
-
+import argparse
 import curriculum_learning
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 import tensorflow as tf
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--model",
+    type=str,
+    help="Name of model to load from agents/",
+    default="fishing_agent_random",
+)
+parser.add_argument(
+    "--range",
+    type=float,
+    help="+/- range to use around r=0.3 and K=1",
+    default=0.05,
+)
+args = parser.parse_args()
 
 # To avoid GPU memory hogging by TF
 config = tf.ConfigProto()
@@ -73,17 +87,15 @@ if __name__ == "__main__":
         n_envs=8,
     )
     for i in range(20):
-        env.set_attr(
-            "params",
-            {"r": random.uniform(0.25, 0.35), "K": random.uniform(0.95, 1.05)},
-        )
+        env.set_attr("r", random.uniform(0.3 - args.range, 0.3 + args.range))
+        env.set_attr("K", random.uniform(1 - args.range, 1 + args.range))
         if i > 0:
-            model = PPO2.load("agents/fishing_agent_random")
+            model = PPO2.load(f"agents/{args.model}")
             model.set_env(env)
         else:
             model = PPO2(
                 CustomLSTMPolicy, env, verbose=2, **fishing_agent_hypers
             )
         model.learn(total_timesteps=100000, log_interval=1)
-        model.save("agents/parameter_agent_random")
+        model.save(f"agents/{args.model}")
         del model
