@@ -89,29 +89,31 @@ if __name__ == "__main__":
             episode_reward = np.cumsum(results.reward)
             if index == 0:
                 color = "blue"
-                label = "curriculum"
+                label = None
+                alpha = 0.3
             else:
                 color = "red"
                 label = "const. esc."
+                alpha = 1
             axs[0].plot(
                 results.time,
                 results.state,
                 color=color,
-                alpha=0.3,
+                alpha=alpha,
                 label=label,
             )
             axs[1].plot(
                 results.time,
                 results.action,
                 color=color,
-                alpha=0.3,
+                alpha=alpha,
                 label=label,
             )
             axs[2].plot(
                 results.time,
                 episode_reward,
                 color=color,
-                alpha=0.3,
+                alpha=alpha,
                 label=label,
             )
 
@@ -119,5 +121,7 @@ if __name__ == "__main__":
     axs[1].set_ylabel("action")
     axs[2].set_ylabel("reward")
     fig.tight_layout()
-    plt.savefig(f"plots/trash_r{args.r}_K{args.K}.png")
+    fig.suptitle(f"r={args.r} K={args.K}")
+    plt.legend()
+    plt.savefig(f"plots/{args.model}_r{args.r}_K{args.K}.png")
     plt.close("all")
