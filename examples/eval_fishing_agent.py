@@ -1,5 +1,6 @@
 import argparse
 import math
+import os
 
 import gym
 import gym_fishing
@@ -36,6 +37,8 @@ parser.add_argument(
 args = parser.parse_args()
 
 if __name__ == "__main__":
+    if not os.path.exists("plots/"):
+        os.makedirs("plots")
     # Making a df for constant escapement policy
     env = gym.make("fishing-v1", r=args.r, K=args.K, sigma=0.0)
 
@@ -47,14 +50,16 @@ if __name__ == "__main__":
 
     # Note that we must map between the "observed" space (on -1, 1) and model
     # space (0, 2K) for both actions and states with the get_* methods
-
-    for t in range(env.Tmax):
-        fish_population = env.get_fish_population(obs)
+    fish_population = env.get_fish_population(obs)
+    row.append([0, fish_population, 0, 0, int(rep), "const_esc"])
+    # Review why you can do env.Tmax+2 here
+    for t in range(1, env.Tmax + 2):
         ## The escapement rule
         Q = max(fish_population - args.K / 2, 0)
         action = env.get_action(Q)
         quota = env.get_quota(action)
         obs, reward, done, info = env.step(action)
+        fish_population = env.get_fish_population(obs)
         row.append([t, fish_population, quota, reward, int(rep), "const_esc"])
 
     const_esc_df = pd.DataFrame(
@@ -114,6 +119,5 @@ if __name__ == "__main__":
     axs[1].set_ylabel("action")
     axs[2].set_ylabel("reward")
     fig.tight_layout()
-    plt.legend()
-    plt.savefig("trash.png")
+    plt.savefig(f"plots/trash_r{args.r}_K{args.K}.png")
     plt.close("all")
