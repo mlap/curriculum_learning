@@ -88,7 +88,7 @@ if __name__ == "__main__":
         lambda: gym.make("fishing-v1"),
         n_envs=8,
     )
-    for i in range(20):
+    for i in range(5):
         env.set_attr("r", random.uniform(0.3 - args.range, 0.3 + args.range))
         env.set_attr("K", random.uniform(1 - args.range, 1 + args.range))
         if i > 0:
@@ -96,7 +96,7 @@ if __name__ == "__main__":
             model.set_env(env)
         else:
             model = PPO2(
-                CustomLSTMPolicy, env, verbose=2, **fishing_agent_hypers
+                CustomLSTMPolicy, env, verbose=2, **fishing_agent_hypers,
             )
         model.learn(total_timesteps=100000, log_interval=1)
         model.save(f"agents/{args.model}")
