@@ -4,10 +4,14 @@ import os
 
 import gym
 import gym_fishing
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
 from gym_fishing.envs.shared_env import plot_mdp, simulate_mdp
+
 from stable_baselines import A2C, ACKTR, PPO2
 from stable_baselines.common import make_vec_env
 from stable_baselines.common.evaluation import evaluate_policy
