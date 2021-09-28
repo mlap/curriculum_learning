@@ -22,6 +22,12 @@ parser.add_argument(
     default="fishing_agent_random",
 )
 parser.add_argument(
+    "--trials",
+    type=int,
+    help="Number of trials to train agent on different parameters",
+    default=20,
+)
+parser.add_argument(
     "--range",
     type=float,
     help="+/- range to use around r=0.3 and K=1",
@@ -88,7 +94,7 @@ if __name__ == "__main__":
         lambda: gym.make("fishing-v1"),
         n_envs=8,
     )
-    for i in range(20):
+    for i in range(args.trials):
         env.set_attr("r", random.uniform(0.3 - args.range, 0.3 + args.range))
         env.set_attr("K", random.uniform(1 - args.range, 1 + args.range))
         if i > 0:
